@@ -1,7 +1,8 @@
 name: "CI/CD piplines"
 on:
   push: 
-    branch: master
+    branches: 
+      - master
   workflow_dispatch:
 jobs:
   setup:
@@ -13,6 +14,7 @@ jobs:
         uses: actions/setup-node@5
       - name: Install Dependencies
         run: npm install
+        
   codacy-security-scan:
     name: Codacy Security Scan
     runs-on: ubuntu-latest

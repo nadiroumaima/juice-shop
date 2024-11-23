@@ -6,15 +6,17 @@ on:
   workflow_dispatch:
 jobs:
   setup:
-  runs-on : ubuntu-latest
-  steps:
+    name: Setup
+
+    runs-on : ubuntu-latest
+    steps:
       - name: "Check out Git repository"
         uses: actions/checkout@3
       - name: "Use Node.js 18"
         uses: actions/setup-node@5
       - name: Install Dependencies
         run: npm install
-        
+
   codacy-security-scan:
     name: Codacy Security Scan
     runs-on: ubuntu-latest

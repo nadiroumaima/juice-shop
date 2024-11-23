@@ -7,11 +7,10 @@ on:
 jobs:
   setup:
     name: Setup
-
     runs-on : ubuntu-latest
     steps:
       - name: "Check out Git repository"
-        uses: actions/checkout@3
+        uses: actions/checkout@v3
       - name: "Use Node.js 18"
         uses: actions/setup-node@5
       - name: Install Dependencies

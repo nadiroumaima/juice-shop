@@ -18,8 +18,7 @@ jobs:
         with:
           node-version: 18
 
-      - name: "Install Dependencies"
-        run: npm install
+      
 
   sonarqube:
     name: SonarQube Trigger
@@ -30,8 +29,8 @@ jobs:
         image: sonarqube
         options: >-
           --health-cmd="curl -f http://localhost:9000/api/system/health" 
-          --health-interval=10s 
-          --health-retries=3
+          --health-interval=20s 
+          --health-retries=5
           -p 9000:9000
           --health-timeout=5s
           --restart=always

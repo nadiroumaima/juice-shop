@@ -72,6 +72,12 @@ jobs:
 
       - name: "Install dependencies"
         run: npm install
+        
+      - name: Update TypeScript and Lodash types
+        run: |
+          npm install typescript@latest --save-dev
+          npm install @types/lodash@latest --save-dev
+
 
       - name: "Build Angular frontend"
         run: npm run build:frontend

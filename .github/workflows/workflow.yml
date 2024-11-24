@@ -94,11 +94,11 @@ jobs:
         run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
       
 
-      - name: "Install Dependencies"
+      - name: "Clear Cache and Reinstall Dependencies"
         run: |
-          npm install --ignore-scripts
-          cd frontend
-          npm install --ignore-scripts --legacy-peer-deps
+          rm -rf node_modules package-lock.json
+          npm install --legacy-peer-deps
+
       - name: "Run TypeScript Compilation"
         run: |
           npx tsc --noEmit

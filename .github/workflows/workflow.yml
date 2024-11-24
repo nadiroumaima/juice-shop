@@ -78,51 +78,42 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -X
   
-  build-job:
-    name: Build
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: "Check out Git repository"
-        uses: actions/checkout@v3
+    # Step 1: Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: "Use Node.js 18"
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+    # Step 2: Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20' # Adjust this based on your project requirements
 
-      - name: "Install Angular CLI"
-        run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
-      - name: "Uninstall Current @types/lodash"
-        run: npm uninstall @types/lodash
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: npm ci
 
-      - name: "Install Compatible @types/lodash"
-        run: npm install @types/lodash@4.17.5 --save-dev
+    # Step 4: Run tests
+    - name: Run Cypress tests
+      uses: cypress-io/github-action@v4
+      with:
+        browser: chrome # Options: chrome, firefox
+        start: npm start # Start your application
+        wait-on: http://localhost:3000 # Wait for your app to be available
+        wait-on-timeout: 120 # Wait timeout in seconds
 
-      - name: "Clear Cache and Reinstall Dependencies"
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install --legacy-peer-deps
+    # Step 5: Build the project
+    - name: Build project
+      run: npm run build
 
-      - name: "Run TypeScript Compilation"
-        run: |
-          npx tsc --noEmit
-
-
-      - name: "Build Frontend"
-        run: |
-          npm run build:frontend
-
-      
-
-      - name: "Build Server"
-        run: |
-          npm run build:server
-
-      - name: "Run Unit Tests"
-        run: npm test -- --watch=false
-
-      - name: "Upload Test Artifacts"
-        uses: actions/upload-artifact@v3
-        with:
-          name: unit-test-coverage
-          path: ./coverage
+    # Step 6: Cache node_modules for faster builds (optional)
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-

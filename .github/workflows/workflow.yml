@@ -1,8 +1,26 @@
 name: "CI/CD Pipelines"
 on:
   push:
-    branches:
-      - master
+    branches-ignore:
+      - l10n_develop
+      - gh-pages
+    paths-ignore:
+      - '*.md'
+      - 'LICENSE'
+      - 'monitoring/grafana-dashboard.json'
+      - 'screenshots/**'
+    tags-ignore:
+      - '*'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - 'LICENSE'
+      - 'data/static/i18n/*.json'
+      - 'frontend/src/assets/i18n/*.json'
+env:
+  NODE_DEFAULT_VERSION: 20
+  ANGULAR_CLI_VERSION: 17
+  CYCLONEDX_NPM_VERSION: '^1.12.0'
   workflow_dispatch:
 
 jobs:

@@ -92,7 +92,11 @@ jobs:
 
       - name: "Install Angular CLI"
         run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
-      
+      - name: "Uninstall Current @types/lodash"
+        run: npm uninstall @types/lodash
+
+      - name: "Install Compatible @types/lodash"
+        run: npm install @types/lodash@4.17.5 --save-dev
 
       - name: "Clear Cache and Reinstall Dependencies"
         run: |

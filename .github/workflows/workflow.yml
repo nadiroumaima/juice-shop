@@ -94,4 +94,4 @@ jobs:
 
       - name: "Run Docker Container"
         run: |
-            docker run --rm -it juiceshop
+            docker run --rm  juiceshop

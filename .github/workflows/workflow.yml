@@ -78,17 +78,12 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -X
   
-  name: CI/CD Pipeline
 
-on:
-  push:
-    branches:
-      - main
 
-jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 

@@ -94,6 +94,4 @@ jobs:
 
       - name: "Run Docker Container"
         run: |
-          docker run --rm juiceshop npm install
-          docker run --rm juiceshop npm run build:frontend
-          docker run --rm juiceshop npm run build:server
+            docker run --rm -it juiceshop

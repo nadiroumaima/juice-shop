@@ -33,6 +33,11 @@ jobs:
           --health-interval=10s 
           --health-retries=3
           -p 9000:9000
+          --health-timeout=5s
+          --restart=always
+          --memory=2g
+          --cpus=2
+
     steps:
       - name: "Check out Git repository"
         uses: actions/checkout@v3

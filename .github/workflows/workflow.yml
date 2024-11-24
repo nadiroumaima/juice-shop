@@ -23,19 +23,7 @@ jobs:
   sonarqube:
     name: SonarQube Trigger
     runs-on: ubuntu-latest
-    needs: setup 
-    services:
-      sonarqube:
-        image: sonarqube
-        options: >-
-          --health-cmd="curl -f http://localhost:9000/api/system/health" 
-          --health-interval=20s 
-          --health-retries=5
-          -p 9000:9000
-          --health-timeout=5s
-          --restart=always
-          --memory=2g
-          --cpus=2
+    needs: setup
 
     steps:
       - name: "Check out Git repository"
@@ -43,9 +31,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Check SonarQube Status"
+        run: |
+          curl -X GET "http://localhost:9000/api/system/health"
+
       - name: "SonarQube Scan"
         uses: kitabisa/sonarqube-action@v1.2.0
         with:
           host: ${{ secrets.SONARQUBE_HOST }}
           login: ${{ secrets.SONARQUBE_TOKEN }}
-    
+          extra-args: "-Dsonar.verbose=true"

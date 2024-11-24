@@ -92,14 +92,17 @@ jobs:
 
       - name: "Install Angular CLI"
         run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
-      - name: "Install TypeScript"
-        run: npm install typescript@latest --save-dev
+      
 
       - name: "Install Dependencies"
         run: |
           npm install --ignore-scripts
           cd frontend
           npm install --ignore-scripts --legacy-peer-deps
+      - name: "Run TypeScript Compilation"
+        run: |
+          npx tsc --noEmit
+
 
       - name: "Build Frontend"
         run: |

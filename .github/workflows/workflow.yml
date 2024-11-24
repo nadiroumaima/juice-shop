@@ -61,7 +61,6 @@ jobs:
   build-job:
     name: Build
     runs-on: ubuntu-latest
-    needs: [setup, Snyk, sonarqube]  # Ensure the previous jobs complete first
     steps:
       - name: "Check out Git repository"
         uses: actions/checkout@v3

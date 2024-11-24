@@ -70,27 +70,23 @@ jobs:
         with:
           node-version: 18
 
-      - name: "Install dependencies"
-        run:  npm install --legacy-peer-deps
+      - name: "Install Angular CLI"
+        run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
 
-
-      - name: Update TypeScript and Lodash types
+      - name: "Install Dependencies"
         run: |
-          npm install typescript@4.9.5 --save-dev
-          npm install @types/lodash@latest --save-dev
+          npm install --ignore-scripts
+          cd frontend
+          npm install --ignore-scripts --legacy-peer-deps
 
+      - name: "Build Application"
+        run: npm run build -- --prod
 
+      - name: "Run Unit Tests"
+        run: npm test -- --watch=false
 
-      - name: "Build Angular frontend"
-        run: npm run build:frontend
-
-      - name: "Build backend with TypeScript"
-        run: npm run build:server -- --noEmit --skipLibCheck
-
-      - name: "Save build artifacts"
-        uses: actions/upload-artifact@v3
+      - name: "Upload Test Artifacts"
+        uses: actions/upload-artifact@v2
         with:
-          name: build-artifacts
-          path: |
-            build/
-            frontend/dist/
+          name: unit-test-coverage
+          path: ./coverage

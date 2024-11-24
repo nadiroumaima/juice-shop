@@ -90,10 +90,10 @@ jobs:
 
       - name: "Build Docker Image"
         run: |
-          docker build -t juice-shop" .
+          docker build -t juiceshop .
 
       - name: "Run Docker Container"
         run: |
-          docker run --rm juice-shop npm install
-          docker run --rm juice-shop npm run build:frontend
-          docker run --rm juice-shop npm run build:server
+          docker run --rm juiceshop npm install
+          docker run --rm juiceshop npm run build:frontend
+          docker run --rm juiceshop npm run build:server

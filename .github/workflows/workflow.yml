@@ -18,12 +18,18 @@ jobs:
         with:
           node-version: 18
 
-      
+  Snyk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}    
 
   sonarqube:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
-
     steps:
     - name: Checking out
       uses: actions/checkout@v3
@@ -49,11 +55,4 @@ jobs:
           -Dsonar.sources=.
           -Dsonar.host.url=https://sonarcloud.io
           -X
-  Snyk:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  

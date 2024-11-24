@@ -17,6 +17,7 @@ on:
       - 'LICENSE'
       - 'data/static/i18n/*.json'
       - 'frontend/src/assets/i18n/*.json'
+  
   workflow_dispatch:
 
 env:
@@ -98,8 +99,16 @@ jobs:
           cd frontend
           npm install --ignore-scripts --legacy-peer-deps
 
-      - name: "Build Application"
-        run: npm run build -- --prod
+      - name: "Build Frontend"
+        run: |
+          cd frontend
+          npm run build:frontend
+
+      
+
+      - name: "Build Server"
+        run: |
+          npm run build:server
 
       - name: "Run Unit Tests"
         run: npm test -- --watch=false

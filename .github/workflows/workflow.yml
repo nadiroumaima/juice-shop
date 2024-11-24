@@ -17,11 +17,12 @@ on:
       - 'LICENSE'
       - 'data/static/i18n/*.json'
       - 'frontend/src/assets/i18n/*.json'
+  workflow_dispatch:
+
 env:
   NODE_DEFAULT_VERSION: 20
   ANGULAR_CLI_VERSION: 17
   CYCLONEDX_NPM_VERSION: '^1.12.0'
-  workflow_dispatch:
 
 jobs:
   setup:
@@ -104,7 +105,7 @@ jobs:
         run: npm test -- --watch=false
 
       - name: "Upload Test Artifacts"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: unit-test-coverage
           path: ./coverage

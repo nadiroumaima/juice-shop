@@ -100,7 +100,7 @@ jobs:
         run: |
             docker push oumaima1702/test-content-nginx:latest
   run_container_and_dast:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: [ubuntu-latest]
     needs: build
     name: Run Application Container and Perform DAST
     steps:
@@ -114,7 +114,7 @@ jobs:
       - name: Run Application Container
         run: |
           docker run -d --name test-app -p 8080:80 oumaima1702/test-content-nginx:latest
-          sleep 10 # Wait for the container to fully start
+          sleep 30 
 
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0

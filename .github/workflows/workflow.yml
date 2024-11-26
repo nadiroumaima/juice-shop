@@ -98,5 +98,5 @@ jobs:
   
       - name: Push Docker image
         run: |
-            docker push oumaima1702/test-content-nginx: latest
+            docker push oumaima1702/test-content-nginx:latest
      

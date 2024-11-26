@@ -83,7 +83,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -93,11 +92,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  
           password: ${{ secrets.DOCKER_TOKEN }}     
 
-      - name: Build and push Docker image to registry
-        uses: docker/build-push-action@v5
-        with:
-          context: .             
-          push: true            
-          tags: juice-shop:latest  
-
+      - name: Build Docker image
+        run: |
+            docker build -t oumaima1702/test-content-nginx:latest .
+  
+      - name: Push Docker image
+        run: |
+            docker push oumaima1702/test-content-nginx: latest
      

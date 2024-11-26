@@ -110,8 +110,17 @@ jobs:
       - name: Pull and Start Application Container
         run: |
           docker run -d -p 8080:80 --name test-app oumaima1702/test-content-nginx:latest
-          timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080)" != "200" ]]; do sleep 5; done' || false
-
+          timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" localhost:8080)" != "200" ]]; do echo "Waiting for container..."; sleep 5; done' || false
+  
+      - name: Check Docker Containers
+        run: docker ps -a
+  
+      - name: Check Logs of Application Container
+        run: docker logs test-app
+  
+      - name: Test Target URL Accessibility
+        run: curl -v http://localhost:8080
+  
       - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
@@ -119,4 +128,3 @@ jobs:
           target: 'http://localhost:8080'
           rules_file_name: '.zap/rules.js'
           cmd_options: '-a -d -x dast-scan-results.xml -I'
-        

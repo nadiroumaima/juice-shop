@@ -99,4 +99,28 @@ jobs:
       - name: Push Docker image
         run: |
             docker push oumaima1702/test-content-nginx:latest
+  run_container_and_dast:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Run Application Container and Perform DAST
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Pull Docker image
+        run: |
+          docker pull oumaima1702/test-content-nginx:latest
+
+      - name: Run Application Container
+        run: |
+          docker run -d --name test-app -p 8080:80 oumaima1702/test-content-nginx:latest
+          sleep 10 # Wait for the container to fully start
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+          target: 'http://localhost:8080'
+          rules_file_name: '.zap/rules.js'
+          report: true
+          fail_action: warn
      

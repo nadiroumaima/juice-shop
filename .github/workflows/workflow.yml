@@ -100,7 +100,7 @@ jobs:
         run: |
             docker push oumaima1702/test-content-nginx:latest
   run_container_and_dast:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ubuntu-latest]
     needs: build
     name: Run Application Container and Perform DAST
     steps:

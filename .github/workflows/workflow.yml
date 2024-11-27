@@ -61,7 +61,7 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -X
     - name: Upload SonarQube Results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: sonarqube-scan-results
         path: .scannerwork/sonar-report.json

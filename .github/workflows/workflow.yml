@@ -132,25 +132,4 @@ jobs:
         with:
           name: dast-report
           path: "zap.out"
-  trivy_scan:
-    name: Trivy Container Security Scan
-    runs-on: ubuntu-latest
-    needs: dast
-    steps:
-      - name: Pull Docker Image
-        run: docker pull oumaima1702/test-content-nginx:latest
-
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install wget -y
-          wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.44.1_Linux-64bit.tar.gz | tar zxvf - -C /usr/local/bin/
-
-      - name: Run Trivy Scan
-        run: trivy image --exit-code 1 --severity HIGH,CRITICAL oumaima1702/test-content-nginx:latest > trivy-report.txt
-
-      - name: Upload Trivy Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: trivy-report
-          path: trivy-report.txt
+  

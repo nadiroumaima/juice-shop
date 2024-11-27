@@ -120,7 +120,7 @@ jobs:
 
       # Step 6: Upload DAST Results
       - name: Upload Snyk Scan Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: snyk-scan-results
           path: snyk-results.sarif

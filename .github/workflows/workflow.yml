@@ -10,14 +10,7 @@ permissions:
   issues: write
   security-events: write
 
-  
-  
-
-
-
 jobs:
-
-
   snyk_scan:
     runs-on: ubuntu-latest
     steps:
@@ -31,10 +24,16 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --sarif-file-output=snyk-results.sarif  
+      - name: Upload Snyk Scan Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: snyk-scan-results
+          path: snyk-scan-results.json
 
-  sonarqube:
+  sonarqube_scan:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
+    needs: snyk_scan
     steps:
     - name: Checking out
       uses: actions/checkout@v3
@@ -60,11 +59,16 @@ jobs:
           -Dsonar.sources=.
           -Dsonar.host.url=https://sonarcloud.io
           -X
-  
+    - name: Upload SonarQube Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: sonarqube-scan-results
+        path: .scannerwork/sonar-report.json
 
 
   build:
     runs-on: ubuntu-latest
+    needs: sonarqube_scan
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -82,27 +86,7 @@ jobs:
       - name: Push Docker image
         run: |
             docker push oumaima1702/test-content-nginx:latest
-  scout_scan:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Install Scout Suite
-        run: |
-          sudo apt-get update && sudo apt-get install -y python3-pip
-          pip3 install scoutsuite
-      - name: Run Scout Suite for container security
-        run: |
-          scoutsuite scan \
-          --cloud-provider docker \
-          --output-dir scout-results \
-          --container-image oumaima1702/test-content-nginx:latest
-      - name: Upload Scout Suite Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: scout-suite-report
-          path: scout-results/
+  
   dast:
     runs-on: ubuntu-latest
     needs: build
@@ -134,8 +118,47 @@ jobs:
         run: docker stop test-app && docker rm test-app
 
       # Step 6: Upload DAST Results
-      - name: Upload DAST Report
-        uses: actions/upload-artifact@v3
+      - name: Upload Snyk Scan Results
+        uses: actions/upload-artifact@v2
         with:
-          name: dast-report
-          path: "zap.out"
+          name: snyk-scan-results
+          path: snyk-results.sarif
+
+  vulnerability_management:
+    name: Vulnerability Management
+    needs: dast
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+
+      - name: Download Snyk Results
+        uses: actions/download-artifact@v4
+        with:
+          name: snyk-scan-results
+          path: analysis-results/snyk
+
+      - name: Download ZAP Results
+        uses: actions/download-artifact@v4
+        with:
+          name: zap-scan-results
+          path: analysis-results/zap
+
+      
+      
+     
+
+  redeploy:
+    name: Redeploy Juice Shop App
+    runs-on: ubuntu-latest
+    needs: vulnerability_management
+    if: success()
+  
+    steps:
+      - name: Pull the latest Juice Shop docker image
+        run: docker pull bkimminich/juice-shop
+  
+      - name: Deploy & Verify Juice Shop App working
+        run: |
+          docker run -d -p 3000:3000 --name juice-shop bkimminich/juice-shop
+          timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3000)" != "200" ]]; do sleep 5; done' || false

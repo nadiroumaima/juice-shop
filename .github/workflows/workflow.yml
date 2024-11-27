@@ -25,10 +25,11 @@ jobs:
         with:
           args: --sarif-file-output=snyk-results.sarif  
       - name: Upload Snyk Scan Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: snyk-scan-results
-          path: snyk-scan-results.json
+            name: snyk-scan-results
+            path: snyk-scan-results.json
+        
 
   sonarqube_scan:
     name: SonarCloud Analysis
@@ -133,10 +134,11 @@ jobs:
     steps:
 
       - name: Download Snyk Results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
-          name: snyk-scan-results
-          path: analysis-results/snyk
+            name: snyk-scan-results
+            path: analysis-results/snyk
+
 
       - name: Download ZAP Results
         uses: actions/download-artifact@v4

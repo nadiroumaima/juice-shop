@@ -30,7 +30,12 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --sarif-file-output=snyk-results.sarif  
+          args: --sarif-file-output=snyk-results.sarif
+      - name: Upload Snyk Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: snyk-results
+          path: snyk-results.sarif 
 
   sonarqube:
     name: SonarCloud Analysis
@@ -60,6 +65,14 @@ jobs:
           -Dsonar.sources=.
           -Dsonar.host.url=https://sonarcloud.io
           -X
+          - name: Upload Sonar Results
+          run: |
+            mkdir -p reports
+            cp -r .scannerwork/reports reports/
+          uses: actions/upload-artifact@v3
+          with:
+            name: sonar-results
+            path: reports/
   
 
 
@@ -119,3 +132,25 @@ jobs:
         with:
           name: dast-report
           path: "zap.out"
+  trivy_scan:
+    name: Trivy Container Security Scan
+    runs-on: ubuntu-latest
+    needs: dast
+    steps:
+      - name: Pull Docker Image
+        run: docker pull oumaima1702/test-content-nginx:latest
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install wget -y
+          wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.44.1_Linux-64bit.tar.gz | tar zxvf - -C /usr/local/bin/
+
+      - name: Run Trivy Scan
+        run: trivy image --exit-code 1 --severity HIGH,CRITICAL oumaima1702/test-content-nginx:latest > trivy-report.txt
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-report
+          path: trivy-report.txt

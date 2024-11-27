@@ -90,26 +90,29 @@ jobs:
       - name: Pull Docker Image
         run: docker pull oumaima1702/test-content-nginx:latest
 
-      # Step 2: Start Docker Container
+      # Step 2: Create Docker Network
+      - name: Create Docker Network
+        run: docker network create zap-network
+
+      # Step 3: Start Docker Container
       - name: Start Docker Container
         run: |
-          docker run -d --name test-app -p 8080:80 oumaima1702/test-content-nginx:latest
-          sleep 10 # Wait for the container to initialize
+          docker run --network=zap-network --name test-app -d oumaima1702/test-content-nginx:latest
+          sleep 30
 
-      # Step 3: Perform DAST using OWASP ZAP
-      - name: Run OWASP ZAP DAST Scan
+      # Step 4: Run OWASP ZAP Full Scan
+      - name: Run OWASP ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.9.0
         with:
-          target: "http://localhost:8080"
-          rules-file: ""
+          target: "http://test-app:80"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 4: Stop Docker Container
+      # Step 5: Stop Docker Container
       - name: Stop and Remove Docker Container
         run: docker stop test-app && docker rm test-app
 
-      # Step 5: Upload DAST Results
+      # Step 6: Upload DAST Results
       - name: Upload DAST Report
         uses: actions/upload-artifact@v3
         with:

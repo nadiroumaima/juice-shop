@@ -7,8 +7,9 @@ on:
 
 permissions:
   contents: write
-  issues: write 
+  issues: write
   security-events: write
+
   
   
 
@@ -111,3 +112,8 @@ jobs:
           cmd_options: '-a -d -x dast-scan-results.xml -I'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Stop and remove Docker container
+        if: always()
+        run: |
+            docker stop test-app || true
+            docker rm test-app || true

@@ -1,7 +1,9 @@
 name: "CI/CD Pipelines"
 on:
   push:
-    master
+    branches:
+      - master
+
 permissions:
   contents: write
   issues: write 

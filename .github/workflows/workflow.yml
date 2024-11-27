@@ -108,10 +108,10 @@ jobs:
   
       - name: Run Application Container
         run: |
-          docker run -d --name test-app -p 8080:80 oumaima1702/test-content-nginx:latest
+          docker run -d --name test-app -p 8081:80 oumaima1702/test-content-nginx:latest
           sleep 30  # Wait for the container to initialize
   
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: 'http://localhost:8080'
+          target: 'http://localhost:8081'

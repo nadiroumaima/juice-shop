@@ -82,6 +82,27 @@ jobs:
       - name: Push Docker image
         run: |
             docker push oumaima1702/test-content-nginx:latest
+  scout_scan:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Scout Suite
+        run: |
+          sudo apt-get update && sudo apt-get install -y python3-pip
+          pip3 install scoutsuite
+      - name: Run Scout Suite for container security
+        run: |
+          scoutsuite scan \
+          --cloud-provider docker \
+          --output-dir scout-results \
+          --container-image oumaima1702/test-content-nginx:latest
+      - name: Upload Scout Suite Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: scout-suite-report
+          path: scout-results/
   dast:
     runs-on: ubuntu-latest
     needs: build

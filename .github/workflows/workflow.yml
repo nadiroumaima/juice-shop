@@ -10,7 +10,7 @@ permissions:
   security-events: write
   
   
-  workflow_dispatch:
+workflow_dispatch:
 
 env:
   NODE_DEFAULT_VERSION: 20

@@ -125,27 +125,7 @@ jobs:
           name: snyk-scan-results
           path: snyk-results.sarif
 
-  vulnerability_management:
-    name: Vulnerability Management
-    needs: dast
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-
-      - name: Download Snyk Results
-        uses: actions/download-artifact@v3
-        with:
-            name: snyk-scan-results
-            path: analysis-results/snyk
-
-
-      - name: Download ZAP Results
-        uses: actions/download-artifact@v4
-        with:
-          name: zap-scan-results
-          path: analysis-results/zap
-
+  
       
       
      
@@ -153,7 +133,7 @@ jobs:
   redeploy:
     name: Redeploy Juice Shop App
     runs-on: ubuntu-latest
-    needs: vulnerability_management
+    needs: dast
     if: success()
   
     steps:

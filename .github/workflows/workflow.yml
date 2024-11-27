@@ -30,12 +30,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --sarif-file-output=snyk-results.sarif
-      - name: Upload Snyk Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: snyk-results
-          path: snyk-results.sarif 
+          args: --sarif-file-output=snyk-results.sarif  
 
   sonarqube:
     name: SonarCloud Analysis
@@ -65,14 +60,6 @@ jobs:
           -Dsonar.sources=.
           -Dsonar.host.url=https://sonarcloud.io
           -X
-          - name: Upload Sonar Results
-          run: |
-            mkdir -p reports
-            cp -r .scannerwork/reports reports/
-          uses: actions/upload-artifact@v3
-          with:
-            name: sonar-results
-            path: reports/
   
 
 
@@ -113,7 +100,6 @@ jobs:
         run: |
           docker run --network=zap-network --name test-app -d oumaima1702/test-content-nginx:latest
           sleep 30
-
       # Step 4: Run OWASP ZAP Full Scan
       - name: Run OWASP ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.9.0
@@ -132,4 +118,3 @@ jobs:
         with:
           name: dast-report
           path: "zap.out"
-  

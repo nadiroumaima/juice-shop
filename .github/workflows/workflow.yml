@@ -82,34 +82,36 @@ jobs:
       - name: Push Docker image
         run: |
             docker push oumaima1702/test-content-nginx:latest
-  zap_scan_dast:
+  dast:
     runs-on: ubuntu-latest
-    needs: build
-    name: Run Application Container and Perform DAST
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Pull Docker image
+      # Step 1: Pull Docker Image
+      - name: Pull Docker Image
+        run: docker pull oumaima1702/test-content-nginx:latest
+
+      # Step 2: Start Docker Container
+      - name: Start Docker Container
         run: |
-          docker pull oumaima1702/test-content-nginx:latest
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Run Application Container
-        run: |
-          docker run -d --name test-app -p 8081:80 oumaima1702/test-content-nginx:latest
-          
-      - name: Run OWASP ZAP Scan
-        uses: zaproxy/action-full-scan@v0.12.0
+          docker run -d --name test-app -p 8080:80 oumaima1702/test-content-nginx:latest
+          sleep 10 # Wait for the container to initialize
+
+      # Step 3: Perform DAST using OWASP ZAP
+      - name: Run OWASP ZAP DAST Scan
+        uses: zaproxy/action-full-scan@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
-          target: 'http://localhost:8081'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a -d -x dast-scan-results.xml -I'
+          target: "http://localhost:8080"
+          rules-file: ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Stop and remove Docker container
-        if: always()
-        run: |
-            docker stop test-app || true
-            docker rm test-app || true
+
+      # Step 4: Stop Docker Container
+      - name: Stop and Remove Docker Container
+        run: docker stop test-app && docker rm test-app
+
+      # Step 5: Upload DAST Results
+      - name: Upload DAST Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: dast-report
+          path: "zap.out"

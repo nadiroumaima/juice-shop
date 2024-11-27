@@ -97,11 +97,7 @@ jobs:
       - name: Run Application Container
         run: |
           docker run -d --name test-app -p 8081:80 oumaima1702/test-content-nginx:latest
-          until curl -s http://localhost:8081 > /dev/null; do
-            echo "Waiting for the application to start..."
-            sleep 5
-          done
-          echo "Application started successfully!"
+          
       - name: Run OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
